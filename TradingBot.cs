@@ -101,7 +101,7 @@ namespace SimpleMovingAverageCrossStrategy
             // Defina as suas chaves de API e outros parâmetros aqui
             string apiKey = "96a0a33dc8cf63826285f8ba958bbf4e375bf5b4548fcda58eb36ed90a3a6e9d";
             string apiSecret = "fc9aec6fbebee31bafbb5aba11698952fb737b27908f722a6e67989a558f48e2";
-            string symbol = "FLOKIBRL"; // Símbolo da criptomoeda que deseja negociar
+            string symbol = "PEPEBRL"; // Símbolo da criptomoeda que deseja negociar
             decimal quantity = 0.01m; // Quantidade de criptomoeda que deseja comprar/vender
 
             // Inicializa a conexão com a exchange ou API da sua escolha
