@@ -1,7 +1,6 @@
 using System;
 using System.Net.Http;
 using System.Threading.Tasks;
-using System.Threading;
 
 namespace SimpleMovingAverageCrossStrategy
 {
@@ -48,7 +47,7 @@ namespace SimpleMovingAverageCrossStrategy
                     dynamic marketData = Newtonsoft.Json.JsonConvert.DeserializeObject(responseBody);
 
                     // Obtém o preço de compra do Bitcoin em reais (BRL)
-                    decimal price = marketData.ticker.last;
+                    decimal price = marketData?.ticker?.last ?? 0;
 
                     return price;
                 }
@@ -99,8 +98,8 @@ namespace SimpleMovingAverageCrossStrategy
         static async Task Main(string[] args)
         {
             // Defina as suas chaves de API e outros parâmetros aqui
-            string apiKey = "96a0a33dc8cf63826285f8ba958bbf4e375bf5b4548fcda58eb36ed90a3a6e9d";
-            string apiSecret = "fc9aec6fbebee31bafbb5aba11698952fb737b27908f722a6e67989a558f48e2";
+            string apiKey = "ac161a2915232980197da4dca718f77847f12659f33a7e4913d6903402b7464b";
+            string apiSecret = "16c1a793a2e3b745306ab9c4482bf3e9085858dd28f33b32078bc527667314b0";
             string symbol = "PEPEBRL"; // Símbolo da criptomoeda que deseja negociar
             decimal quantity = 0.01m; // Quantidade de criptomoeda que deseja comprar/vender
 
@@ -110,19 +109,17 @@ namespace SimpleMovingAverageCrossStrategy
             // Mantém o robô em execução infinita
             while (true)
             {
-                // Gera um preço aleatório para a ordem de compra (apenas para ilustrar)
-                decimal price = await GenerateRandomPriceAsync();
+                // Obter o preço atual da criptomoeda
+                decimal price = await client.GetPriceAsync(symbol);
                 Console.WriteLine($"Preço atual da criptomoeda: {price}");
 
-                // Emite uma ordem de compra com o preço aleatório
+                // Emite uma ordem de compra com o preço atual
                 client.PlaceOrder(symbol, OrderType.Buy, quantity);
                 Console.WriteLine($"Ordem de compra emitida para {symbol}.");
 
                 // Calcula o preço de stop loss e take profit
                 decimal stopLossPrice = price * 0.99m; // Stop loss de 1% abaixo do preço atual
                 decimal takeProfitPrice = price * 1.03m; // Take profit de 3% acima do preço atual
-                Console.WriteLine($"Preço de stop loss: {stopLossPrice}");
-                Console.WriteLine($"Preço de take profit: {takeProfitPrice}");
 
                 // Emite a ordem de stop loss
                 client.PlaceStopLossOrder(symbol, stopLossPrice);
@@ -140,21 +137,8 @@ namespace SimpleMovingAverageCrossStrategy
                 Console.WriteLine($"Take Profit: {takeProfitPrice}");
 
                 // Aguarda um intervalo de tempo antes de verificar novamente
-                Thread.Sleep(60000); // 1 minuto
+                await Task.Delay(60000); // 1 minuto
             }
-        }
-
-        // Método para gerar um preço aleatório apenas para ilustrar
-        static async Task<decimal> GenerateRandomPriceAsync()
-        {
-            Random rand = new Random();
-            decimal minPrice = 50000m; // Preço mínimo fictício
-            decimal maxPrice = 60000m; // Preço máximo fictício
-
-            // Simula um atraso de 1 segundo (apenas para ilustração)
-            await Task.Delay(1000);
-
-            return minPrice + (decimal)rand.NextDouble() * (maxPrice - minPrice);
         }
     }
 }
